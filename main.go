@@ -45,7 +45,7 @@ func (f formInput) save() error {
 	if err != nil {
 		return err
 	}
-	forms = []formInput{f}
+	forms = append(forms, f)
 	toSave, err := json.Marshal(forms)
 	if err != nil {
 		return err
