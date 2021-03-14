@@ -14,7 +14,7 @@ import (
 	"time"
 
 	env "github.com/joho/godotenv"
-	)
+)
 
 const envFile = ".env"
 const dataFile = "data/forms.json"
@@ -63,7 +63,12 @@ func handleFunc(resp http.ResponseWriter, req *http.Request) {
 			fmt.Fprint(resp, err.Error())
 			return
 		}
-		f := formInput{}
+		f := formInput{
+			FirstName:   req.FormValue("first_name"),
+			LastName:    req.FormValue("last_name"),
+			Email:       req.FormValue("email"),
+			PhoneNumber: req.FormValue("phone_number"),
+		}
 		err = f.validate()
 		if err != nil {
 			resp.WriteHeader(http.StatusBadRequest)
