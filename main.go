@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -84,8 +85,31 @@ func handleFunc(resp http.ResponseWriter, req *http.Request) {
 		resp.WriteHeader(http.StatusOK)
 		fmt.Fprint(resp, "form saved")
 	case http.MethodGet:
-		resp.WriteHeader(http.StatusOK)
-		fmt.Fprint(resp, "under construction")
+		file, err := ioutil.ReadFile(dataFile)
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprint(resp, err.Error())
+			return
+		}
+		var forms []formInput
+		err = json.Unmarshal(file, &forms)
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprint(resp, err.Error())
+			return
+		}
+		t, err := template.ParseFiles("list.html")
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprint(resp, err.Error())
+			return
+		}
+		err = t.Execute(resp, forms)
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprint(resp, err.Error())
+			return
+		}
 	default:
 		log.Println("error no 404")
 		resp.WriteHeader(http.StatusNotFound)
