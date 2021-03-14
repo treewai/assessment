@@ -112,6 +112,7 @@ func run() (s *http.Server) {
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
+		Handler:        mux,
 	}
 
 	go func() {
